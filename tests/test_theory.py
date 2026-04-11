@@ -1,20 +1,30 @@
-from classifier.theory import get_note
-def test_note_mapping():
-    # Test natural notes
-    assert get_note("C").total_value == 0
-    assert get_note("B").total_value == 11
+from classifier.theory import get_note, interval
+class TestNoteMapping():
+    # Issue #2
+    def test_natural_notes(self):
+        assert get_note("C").total_value == 0
+        assert get_note("B").total_value == 11
     
-    # Test enharmonics (Sharps and Flats)
-    assert get_note("C#").total_value == 1
-    assert get_note("Db").total_value == 1
+    def test_enharmonics(self):
+        assert get_note("C#").total_value == 1
+        assert get_note("Db").total_value == 1
     
-    # Test wrap-around
-    assert get_note("B#").total_value == 0
-    assert get_note("Cb").total_value == 11
+    def test_wrap_around(self):
+        assert get_note("B#").total_value == 0
+        assert get_note("Cb").total_value == 11
     
-    # Test double accidentals (just in case!)
-    assert get_note("C##").to == 2
+    def double_accidentals(self):
+        assert get_note("C##").total_value == 2
 
-if __name__ == "__main__":
-    test_note_mapping()
-    print("All tests passed!")
+class TestNoteDistance:
+    def test_simple_intervals(self):
+        c = get_note("C")
+        e = get_note("E")
+        g = get_note("G")
+        assert interval(c,e) == 4
+        assert interval(e,g) == 3
+    def test_wrap_around_dist(self):
+        b = get_note("B")
+        d = get_note ("D")
+        assert interval (b,d) == 3
+

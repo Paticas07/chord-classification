@@ -12,6 +12,12 @@ NOTES = {
 
 SHARP = 1
 FLAT = -1
+LEN_SCALE = 12
+
+IM3 = 1
+Im3 = 2
+IM2 = 3
+IP4 = 4
 
 @dataclass
 class note:
@@ -34,3 +40,8 @@ def get_note(raw_note:str) -> note:
     nota = note(base, t_value % 12)
 
     return nota
+
+def interval(n1:note,n2:note) -> int:
+    if n1.total_value > n2.total_value:
+        n2.total_value += LEN_SCALE
+    return n2.total_value - n1.total_value

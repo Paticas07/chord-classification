@@ -1,4 +1,8 @@
-from classifier.theory import get_note, interval
+from classifier.theory import *
+from classifier.main import *
+from classifier.models import *
+import pytest
+
 class TestNoteMapping():
     # Issue #2
     def test_natural_notes(self):
@@ -28,3 +32,24 @@ class TestNoteDistance:
         d = get_note ("D")
         assert interval (b,d) == 3
 
+class TestParseArgs:
+    def test_valid_triad_conversion(self):
+        result = parse_args(["C", "E", "G"])
+        assert result is not None
+        # Verify the first note's pitch class is 0 (C)
+        assert result.root.total_value == 0 
+
+    def test_invalid_input(self):
+        # Testing what happens with 2 notes if your function handles it
+        result = parse_args(["C", "E"]) 
+        assert result is None
+
+    def test_cli_output(self, capsys, monkeypatch):
+    # This simulates typing: python main.py C E G
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E', 'G'])
+
+        main()
+
+        # Capture what was printed to the terminal
+        captured = capsys.readouterr()
+        assert "Chord identified" in captured.out

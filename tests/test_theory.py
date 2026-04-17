@@ -53,3 +53,52 @@ class TestParseArgs:
         # Capture what was printed to the terminal
         captured = capsys.readouterr()
         assert "Chord identified" in captured.out
+        
+class TestInputValidation:
+    """Tests all aspects of user input, from note strings to CLI arguments."""
+
+    # --- Note String Validation ---
+    
+    def test_valid_note_parsing(self):
+        """Checks if standard notes are converted to Note objects correctly."""
+        note = get_note("C#")
+        assert note.total_value == 1
+        assert note.base == 0
+
+    def test_invalid_pitch_letter(self):
+        """Ensures that a non A-G letter triggers a SystemExit."""
+        with pytest.raises(SystemExit) as e:
+            get_note("X")
+        assert e.value.code == 1
+
+    def test_contradictory_accidentals(self):
+        """Ensures that mixing # and b (e.g., C#b) is rejected."""
+        with pytest.raises(SystemExit) as e:
+            get_note("C#b")
+        assert e.value.code == 1
+
+    # --- CLI Argument Validation ---
+
+    def test_too_few_arguments(self, capsys, monkeypatch):
+        """Checks if providing only 2 notes triggers our custom error message."""
+        # Simulate: python main.py C E
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E'])
+        
+        with pytest.raises(SystemExit) as e:
+            main()
+        
+        captured = capsys.readouterr()
+        assert "too little arguments" in captured.out
+        assert e.value.code == 2
+
+    def test_too_many_arguments(self, capsys, monkeypatch):
+        """Checks if providing 4 notes triggers our custom error message."""
+        # Simulate: python main.py C E G B
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E', 'G', 'B'])
+        
+        with pytest.raises(SystemExit) as e:
+            main()
+        
+        captured = capsys.readouterr()
+        assert "too many arguments" in captured.out
+        assert e.value.code == 2

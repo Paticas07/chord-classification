@@ -56,8 +56,6 @@ class TestParseArgs:
         
 class TestInputValidation:
     """Tests all aspects of user input, from note strings to CLI arguments."""
-
-    # --- Note String Validation ---
     
     def test_valid_note_parsing(self):
         """Checks if standard notes are converted to Note objects correctly."""
@@ -81,7 +79,6 @@ class TestInputValidation:
 
     def test_too_few_arguments(self, capsys, monkeypatch):
         """Checks if providing only 2 notes triggers our custom error message."""
-        # Simulate: python main.py C E
         monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E'])
         
         with pytest.raises(SystemExit) as e:
@@ -93,7 +90,6 @@ class TestInputValidation:
 
     def test_too_many_arguments(self, capsys, monkeypatch):
         """Checks if providing 4 notes triggers our custom error message."""
-        # Simulate: python main.py C E G B
         monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E', 'G', 'B'])
         
         with pytest.raises(SystemExit) as e:
@@ -102,3 +98,14 @@ class TestInputValidation:
         captured = capsys.readouterr()
         assert "too many arguments" in captured.out
         assert e.value.code == 2
+
+class TestChordIntervals:
+    """Verifies that interval_chord returns the correct interval tuples."""
+
+    def test_major_signature(self):
+        c = Chord(Note(0, 0), Note(4, 4), Note(7, 7))
+        assert interval_chord(c) == (4, 3)
+
+    def test_minor_signature(self):
+        c = Chord(Note(0, 0), Note(2, 3), Note(7, 7))
+        assert interval_chord(c) == (3, 4)

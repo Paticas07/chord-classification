@@ -44,3 +44,6 @@ def interval(n1:Note,n2:Note) -> int:
         print(f"Error: interval formed by {VAL_NOTES[n1.base]} and {VAL_NOTES[n2.base]} not valid.")
         sys.exit(1)
     return interval
+
+def interval_chord(c:Chord) -> tuple:
+    return (interval(c.root,c.third), interval(c.third,c.fifth))

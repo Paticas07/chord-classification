@@ -19,6 +19,13 @@ VAL_NOTES = {
     11:'B'
 }
 
+CHORDS = {
+    (3,3):'Diminished',
+    (4,4):'Augmented',
+    (3,4):'Minor',
+    (4,3):'Major'
+}
+
 SHARP = 1
 FLAT = -1
 LEN_SCALE = 12
@@ -33,3 +40,4 @@ class Chord:
     root: Note
     third:Note
     fifth: Note
+

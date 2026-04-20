@@ -17,7 +17,7 @@ class TestNoteMapping():
         assert get_note("B#").total_value == 0
         assert get_note("Cb").total_value == 11
     
-    def double_accidentals(self):
+    def test_double_accidentals(self):
         assert get_note("C##").total_value == 2
 
 class TestNoteDistance:
@@ -109,3 +109,26 @@ class TestChordIntervals:
     def test_minor_signature(self):
         c = Chord(Note(0, 0), Note(2, 3), Note(7, 7))
         assert interval_chord(c) == (3, 4)
+
+class TestChordIdentification:
+    """Verifies that the classifier correctly identifies chord names."""
+
+    def test_major_chord_identification(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E', 'G'])
+        main()
+        captured = capsys.readouterr()
+        assert "Chord identified: Major" in captured.out
+
+    def test_minor_chord_identification(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'Eb', 'G'])
+        main()
+        captured = capsys.readouterr()
+        assert "Chord identified: Minor" in captured.out
+
+    def test_unknown_chord_failure(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'F', 'G'])
+        with pytest.raises(SystemExit) as e:
+            main()
+        captured = capsys.readouterr()
+        assert "Error: interval formed" in captured.out
+        assert e.value.code == 1

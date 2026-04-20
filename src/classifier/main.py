@@ -23,6 +23,13 @@ def parse_args (input:list) -> Chord:
         return Chord(*notes)
     else:
         return None
+
+def find_chord(chord:tuple) -> str:
+    if chord not in CHORDS:
+        print("Error: Chord not identified")
+        sys.exit(1)
+    else:
+        return CHORDS[chord]
     
 def main ():
     parser = ChordParser(description="Chord Classifier")
@@ -30,12 +37,12 @@ def main ():
     parser.add_argument("notes", nargs=3, help= "Notes of the chord in ascending pitch")
     raw_chord = parser.parse_args()
     chord = parse_args(raw_chord.notes)
-    interval(chord.root,chord.third)
-    interval(chord.third, chord.fifth)
+
     if chord:
-        print(f"Chord identified: {chord}")
+        t_chord = find_chord(interval_chord(chord))
+        print(f"Chord identified: {t_chord}")
     else:
-        print("ERROR: Chord not identified")
+        print("Error: Chord not identified")
         sys.exit(1)
 
 if __name__ == "__main__":

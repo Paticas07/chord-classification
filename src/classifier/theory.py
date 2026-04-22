@@ -11,9 +11,13 @@ def get_note(raw_note:str) -> Note:
     base = NOTES[args[0].upper()]
     elem = len(args)
     status = 0
-
+    cnt = 0
+    acc_string = ''
     t_value = base
+
+    
     for i in range (elem-1):
+        cnt +=1
         if args[i+1] == '#':
             if (status == FLAT):
                 print(f"Error: {raw_note} is not a valid note.")
@@ -30,8 +34,9 @@ def get_note(raw_note:str) -> Note:
 
             status = FLAT
             t_value += FLAT
+        acc_string = args[1] * (cnt)
 
-    nota = Note(base, t_value % 12)
+    nota = Note(base, t_value % 12,acc_string)
 
     return nota
 

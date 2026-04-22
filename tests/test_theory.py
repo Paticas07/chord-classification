@@ -19,6 +19,16 @@ class TestNoteMapping():
     
     def test_double_accidentals(self):
         assert get_note("C##").total_value == 2
+    
+    def test_accidental_storage(self):
+        c_sharp = get_note("C#")
+        assert c_sharp.acc == "#"
+    
+        d_flat = get_note("Db")
+        assert d_flat.acc == "b"
+
+        c_double_sharp = get_note("C##")
+        assert c_double_sharp.acc == "##"
 
 class TestNoteDistance:
     def test_simple_intervals(self):
@@ -36,23 +46,20 @@ class TestParseArgs:
     def test_valid_triad_conversion(self):
         result = parse_args(["C", "E", "G"])
         assert result is not None
-        # Verify the first note's pitch class is 0 (C)
         assert result.root.total_value == 0 
 
     def test_invalid_input(self):
-        # Testing what happens with 2 notes if your function handles it
         result = parse_args(["C", "E"]) 
         assert result is None
 
     def test_cli_output(self, capsys, monkeypatch):
-    # This simulates typing: python main.py C E G
         monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E', 'G'])
 
         main()
 
         # Capture what was printed to the terminal
         captured = capsys.readouterr()
-        assert "Chord identified" in captured.out
+        assert "C Major" in captured.out
         
 class TestInputValidation:
     """Tests all aspects of user input, from note strings to CLI arguments."""
@@ -103,11 +110,11 @@ class TestChordIntervals:
     """Verifies that interval_chord returns the correct interval tuples."""
 
     def test_major_signature(self):
-        c = Chord(Note(0, 0), Note(4, 4), Note(7, 7))
+        c = Chord(Note(0, 0,''), Note(4, 4,''), Note(7, 7,''))
         assert interval_chord(c) == (4, 3)
 
     def test_minor_signature(self):
-        c = Chord(Note(0, 0), Note(2, 3), Note(7, 7))
+        c = Chord(Note(0, 0,''), Note(2, 3,''), Note(7, 7,''))
         assert interval_chord(c) == (3, 4)
 
 class TestChordIdentification:
@@ -117,13 +124,19 @@ class TestChordIdentification:
         monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E', 'G'])
         main()
         captured = capsys.readouterr()
-        assert "Chord identified: Major" in captured.out
+        assert "C Major" in captured.out
 
     def test_minor_chord_identification(self, capsys, monkeypatch):
         monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'Eb', 'G'])
         main()
         captured = capsys.readouterr()
-        assert "Chord identified: Minor" in captured.out
+        assert "C Minor" in captured.out
+        
+    def test_sharp_major_identification(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C#', 'E#', 'G#'])
+        main()
+        captured = capsys.readouterr()
+        assert "C# Major" in captured.out
 
     def test_unknown_chord_failure(self, capsys, monkeypatch):
         monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'F', 'G'])

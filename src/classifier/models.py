@@ -34,6 +34,7 @@ LEN_SCALE = 12
 class Note:
     base: int
     total_value: int
+    acc: str
 
 @dataclass
 class Chord:

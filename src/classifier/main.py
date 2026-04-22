@@ -31,6 +31,12 @@ def find_chord(chord:tuple) -> str:
     else:
         return CHORDS[chord]
     
+def print_output(chord:Chord) -> str:
+    type_c = find_chord(interval_chord(chord))
+    print(f"{VAL_NOTES[chord.root.base]}{chord.root.acc} {type_c}")
+    
+
+    
 def main ():
     parser = ChordParser(description="Chord Classifier")
 
@@ -39,8 +45,7 @@ def main ():
     chord = parse_args(raw_chord.notes)
 
     if chord:
-        t_chord = find_chord(interval_chord(chord))
-        print(f"Chord identified: {t_chord}")
+        print_output(chord)
     else:
         print("Error: Chord not identified")
         sys.exit(1)

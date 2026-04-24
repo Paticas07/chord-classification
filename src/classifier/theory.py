@@ -34,6 +34,10 @@ def get_note(raw_note:str) -> Note:
 
             status = FLAT
             t_value += FLAT
+
+        else:
+            print(f"Error: {i} is not a valid accident please use # or b.")
+            sys.exit(1)            
         acc_string = args[1] * (cnt)
 
     nota = Note(base, t_value % 12,acc_string)
@@ -41,6 +45,21 @@ def get_note(raw_note:str) -> Note:
     return nota
 
 def interval(n1:Note,n2:Note) -> int:
+
+    base1 = n1.base
+    base2 = n2.base
+    if base1 > base2:
+        base2 += LEN_SCALE
+    if base1 in [0,5,7]:
+        i = 4
+    else:
+        i = 3
+    
+    if base2 - base1 != i:
+        print(f"Error: interval formed by {VAL_NOTES[n1.base]} and {VAL_NOTES[n2.base]} not valid.")
+        print(f"Interval is not a third.")
+        sys.exit(1)
+
     if n1.total_value > n2.total_value:
         n2.total_value += LEN_SCALE
     interval = n2.total_value - n1.total_value

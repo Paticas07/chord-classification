@@ -114,7 +114,7 @@ class TestChordIntervals:
         assert interval_chord(c) == (4, 3)
 
     def test_minor_signature(self):
-        c = Chord(Note(0, 0,''), Note(2, 3,''), Note(7, 7,''))
+        c = Chord(Note(2, 2,''), Note(5, 5,''), Note(9, 9,''))
         assert interval_chord(c) == (3, 4)
 
 class TestChordIdentification:
@@ -145,3 +145,51 @@ class TestChordIdentification:
         captured = capsys.readouterr()
         assert "Error: interval formed" in captured.out
         assert e.value.code == 1
+    
+class TestUnit:
+    """Verifys all types of chords"""
+    def test_chord1(self,capsys, monkeypatch):
+        monkeypatch.setattr(sys,'argv', ['main.py', 'C', 'E', 'G&'])
+        with pytest.raises(SystemExit) as e:
+            main()
+        captured = capsys.readouterr()
+        assert "not a valid accident" in captured.out
+        assert e.value.code == 1
+
+    def test_chord2(self,capsys, monkeypatch):
+        monkeypatch.setattr(sys,'argv', ['main.py', 'D', 'F', 'H'])
+        with pytest.raises(SystemExit) as e:
+            main()
+        captured = capsys.readouterr()
+        assert "not a valid note" in captured.out
+        assert e.value.code == 1 
+
+    def test_chord3(self,capsys, monkeypatch):
+        monkeypatch.setattr(sys,'argv', ['main.py', 'c', 'E', 'g'])
+        main()
+        captured = capsys.readouterr()
+        assert "C Major" in captured.out
+    
+    def test_chord4(self,capsys, monkeypatch):
+        monkeypatch.setattr(sys,'argv', ['main.py', 'C', 'E', 'Ab'])
+        with pytest.raises(SystemExit) as e:
+            main()
+        captured = capsys.readouterr()
+        assert "Error: interval" in captured.out
+        assert e.value.code == 1
+    
+    def test_chord5(self,capsys, monkeypatch):
+        monkeypatch.setattr(sys,'argv', ['main.py', 'G', 'B', 'D'])
+        main()
+        captured = capsys.readouterr()
+        assert "G Major" in captured.out
+
+    def test_chord6(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'F##', 'A##', 'C###'])
+        main()
+        captured = capsys.readouterr()
+        assert "Augmented" in captured.out
+    
+
+
+

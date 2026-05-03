@@ -1,4 +1,5 @@
 from classifier.models import *
+import classifier.models as models
 import sys
 
 def get_note(raw_note:str) -> Note:
@@ -44,8 +45,13 @@ def get_note(raw_note:str) -> Note:
 
     return nota
 
-def interval(n1:Note,n2:Note) -> int:
+def invert_chord(c: Chord):
+    temp = c.root
+    c.root = c.third
+    c.third = c.fifth
+    c.fifth = temp
 
+def interval(n1:Note,n2:Note) -> int:
     base1 = n1.base
     base2 = n2.base
     if base1 > base2:
@@ -55,19 +61,26 @@ def interval(n1:Note,n2:Note) -> int:
     else:
         i = 3
     
-    if base2 - base1 != i:
-        print(f"Error: interval formed by {VAL_NOTES[n1.base]} and {VAL_NOTES[n2.base]} not valid.")
-        print(f"Interval is not a third.")
+    if base2 - base1 != i and models.count == 2 :
+        print(f"Error: interval is not a third.")
         sys.exit(1)
+    elif base2 - base1 != i:
+        return -1
+
 
     if n1.total_value > n2.total_value:
         n2.total_value += LEN_SCALE
     interval = n2.total_value - n1.total_value
 
-    if (interval != 3 and interval != 4):
-        print(f"Error: interval formed by {VAL_NOTES[n1.base]} and {VAL_NOTES[n2.base]} not valid.")
+    if (interval != 3 and interval != 4 and models.count == 2):
+        print(f"Error: interval not valid.")
         sys.exit(1)
+    elif interval != 3 and interval != 4:
+        return -1
     return interval
 
 def interval_chord(c:Chord) -> tuple:
+    while interval(c.root,c.third) == -1 or interval(c.third,c.fifth) == -1:
+        invert_chord(c)
+        models.count = models.count + 1
     return (interval(c.root,c.third), interval(c.third,c.fifth))

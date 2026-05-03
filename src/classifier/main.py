@@ -1,5 +1,8 @@
 from classifier.theory import *
 from classifier.models import *
+
+import classifier.models as models
+
 import argparse
 import sys
 
@@ -33,7 +36,13 @@ def find_chord(chord:tuple) -> str:
     
 def print_output(chord:Chord) -> str:
     type_c = find_chord(interval_chord(chord))
-    print(f"{VAL_NOTES[chord.root.base]}{chord.root.acc} {type_c}")
+    inv = ""
+    if models.count == 2:
+        inv = "1 inv"
+    elif models.count == 1:
+        inv = "2 inv"
+
+    print(f"{VAL_NOTES[chord.root.base]}{chord.root.acc} {type_c} {inv}")
     
 
     
@@ -43,6 +52,7 @@ def main ():
     parser.add_argument("notes", nargs=3, help= "Notes of the chord in ascending pitch")
     raw_chord = parser.parse_args()
     chord = parse_args(raw_chord.notes)
+    models.count = 0
 
     if chord:
         print_output(chord)

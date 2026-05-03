@@ -1,6 +1,7 @@
 from classifier.theory import *
 from classifier.main import *
 from classifier.models import *
+
 import pytest
 
 class TestNoteMapping():
@@ -143,7 +144,7 @@ class TestChordIdentification:
         with pytest.raises(SystemExit) as e:
             main()
         captured = capsys.readouterr()
-        assert "Error: interval formed" in captured.out
+        assert "Error: interval" in captured.out
         assert e.value.code == 1
     
 class TestUnit:
@@ -171,7 +172,7 @@ class TestUnit:
         assert "C Major" in captured.out
     
     def test_chord4(self,capsys, monkeypatch):
-        monkeypatch.setattr(sys,'argv', ['main.py', 'C', 'E', 'Ab'])
+        monkeypatch.setattr(sys,'argv', ['main.py', 'C', 'D', 'Ab'])
         with pytest.raises(SystemExit) as e:
             main()
         captured = capsys.readouterr()
@@ -190,6 +191,24 @@ class TestUnit:
         captured = capsys.readouterr()
         assert "Augmented" in captured.out
     
+class TestInversions:
+    """Verifies that the classifier correctly identifies chord inversions."""
+    def test_first_inversion(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'E', 'G', 'C'])
+        main()
+        captured = capsys.readouterr()
+        assert "1 inv\n" in captured.out
 
+    def test_second_inversion(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'G', 'C', 'E'])
+        main()
+        captured = capsys.readouterr()
+        assert "2 inv\n" in captured.out
 
+    def test_no_inversion(self, capsys, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['main.py', 'C', 'E', 'G'])
+        main()
+        captured = capsys.readouterr()
+
+        assert "inv" not in captured.out
 

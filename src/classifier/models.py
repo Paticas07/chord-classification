@@ -42,3 +42,4 @@ class Chord:
     third:Note
     fifth: Note
 
+count = 0

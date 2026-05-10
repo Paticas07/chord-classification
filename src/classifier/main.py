@@ -47,9 +47,17 @@ def print_output(chord:Chord) -> str:
 
     
 def main ():
-    parser = ChordParser(description="Chord Classifier")
+    parser = ChordParser(
+        description="Triad Chord Classifier",
+        epilog = "Example: python3 src/classifier/main.py Ab C E "
+    )
 
-    parser.add_argument("notes", nargs=3, help= "Notes of the chord in ascending pitch")
+    parser.add_argument(
+        "notes",
+        nargs=3,
+        help= "3 notes of the chord, in order, in ascending pitch"
+    )
+    
     raw_chord = parser.parse_args()
     chord = parse_args(raw_chord.notes)
     models.count = 0

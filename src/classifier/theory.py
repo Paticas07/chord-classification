@@ -5,7 +5,7 @@ import sys
 def get_note(raw_note:str) -> Note:
     args = list(raw_note)
     if args[0].upper()  not in NOTES:
-        print(f"ERROR: {raw_note} is not a valid note.")
+        print(f"Error: {raw_note} is not a valid note.")
         print("Please enter a valid pitch (A-G).")
         sys.exit(1)
 
